@@ -4,26 +4,31 @@
     using System.Linq;
     using Microsoft.AspNetCore.Mvc;
     using MoiteRecepti.Data;
+    using MoiteRecepti.Data.Common.Repositories;
+    using MoiteRecepti.Data.Models;
+    using MoiteRecepti.Services.Data;
     using MoiteRecepti.Web.ViewModels;
     using MoiteRecepti.Web.ViewModels.Home;
 
     public class HomeController : BaseController
     {
-        private readonly ApplicationDbContext db;
+        private readonly IGetCountsService countsServise;
 
-        public HomeController(ApplicationDbContext db)
+        public HomeController(IGetCountsService countsServise)
         {
-            this.db = db;
+            this.countsServise = countsServise;
         }
 
         public IActionResult Index()
         {
+            var counts = this.countsServise.GetCounts();
+
             var viewModel = new IndexViewModel
             {
-                CategoriesCount = db.Categories.Count(),
-                RecipesCount = db.Recipes.Count(),
-                ImagesCount = db.Images.Count(),
-                IngredientsCount = db.Ingredients.Count(),
+                CategoriesCount = counts.CategoriesCount,
+                ImagesCount = counts.ImagesCount,
+                IngredientsCount = counts.IngredientsCount,
+                RecipesCount = counts.RecipesCount,
             };
 
             return this.View(viewModel);
