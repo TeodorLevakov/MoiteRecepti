@@ -3,11 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Text;
-
+    using System.Threading.Tasks;
     using MoiteRecepti.Web.ViewModels.Recipes;
 
     public interface IRecipeService
     {
-        void Create(CreateRecipeInputModel input);
+        Task CreateAsync(CreateRecipeInputModel input);
     }
 }
