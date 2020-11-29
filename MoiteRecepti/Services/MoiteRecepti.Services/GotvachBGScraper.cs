@@ -86,7 +86,7 @@
 
                 foreach (var item in recipe.Ingredients)
                 {
-                    var ingr = item.Split("-");
+                    var ingr = item.Split(" - ", 2);
 
                     if (ingr.Length < 2)
                     {
@@ -136,7 +136,7 @@
                     await this.ingredientsRepository.SaveChangesAsync();
                 }
 
-                  return ingridient.Id;
+                 return ingridient.Id;
         }
 
         private async Task<int> GetOrCreateCategoryAsync(string categoryName)

@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using MoiteRecepti.Data.Common.Repositories;
     using MoiteRecepti.Data.Models;
+    using MoiteRecepti.Services.Mapping;
     using MoiteRecepti.Web.ViewModels.Recipes;
 
     public class RecipeService : IRecipeService
@@ -21,7 +22,7 @@
             this.ingredientsRepository = ingredientsRepository;
         }
 
-        public async Task CreateAsync(CreateRecipeInputModel input)
+        public async Task CreateAsync(CreateRecipeInputModel input, string userId)
         {
             var recipe = new Recipe 
             {
@@ -31,6 +32,7 @@
                 Name = input.Name,
                 PortionsCount = input.PortionsCount,
                 PreparatioTime = TimeSpan.FromMinutes(input.PreparatioTime),
+                AddedByUserId = userId,
             };
 
             foreach (var item in input.Ingredients)
@@ -51,6 +53,36 @@
 
             await this.recipesRepository.AddAsync(recipe);
             await this.recipesRepository.SaveChangesAsync();
+        }
+
+        public IEnumerable<RecipeInListViewModel> GetAll(int page, int itemsPerPage = 12)
+        {
+            var recipes = this.recipesRepository.AllAsNoTracking()
+                .OrderByDescending(x => x.Id)
+                .Skip((page-1) * itemsPerPage)
+                .Take(itemsPerPage)
+                .To<RecipeInListViewModel>()
+                //.Select(x => new RecipeInListViewModel
+                //{
+                //    Id = x.Id,
+                //    Name = x.Name,
+                //    CategoryName = x.Category.Name,
+                //    CategoryId = x.CategoryId,
+                //    ImageUrl =
+                //            x.Images.FirstOrDefault().RemoteImageUrl != null ?
+                //            x.Images.FirstOrDefault().RemoteImageUrl :
+                //            "images/recipes" + x.Images.FirstOrDefault().Id + "." + x.Images.FirstOrDefault().Extension,
+                //})
+                .ToList();
+
+            return recipes;
+
+        }
+
+        public int GetCount()
+        {
+
+            return this.recipesRepository.All().Count();
         }
     }
 }

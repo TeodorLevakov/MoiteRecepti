@@ -23,7 +23,7 @@ namespace MoiteRecepti.Web.Controllers
 
         public async Task<IActionResult> Add()
         {
-            await this.gotvachBGScraper.PopulateDBWithRecipesAsync(100);
+            await this.gotvachBGScraper.PopulateDBWithRecipesAsync(1000);
 
             return this.Redirect("/");
         }
